@@ -17,14 +17,14 @@
               "mode": "raw",
               "raw": "{\n    \"amount\": 600,\n    \"description\": \"Dinner\",\n    \"paid_by\": \"Shantanu\",\n    \"participants\": [\"Shantanu\", \"Sanket\", \"Om\"]\n}"
             },
-            "url": { "raw": "http://localhost:5000/expenses", "host": ["localhost"], "port": "5000", "path": ["expenses"] }
+            "url": { "raw": "https://split-backend-85gy.onrender.com/expenses", "host": ["split-backend-85gy.onrender.com"], "path": ["expenses"] }
           }
         },
         {
           "name": "Get All Expenses",
           "request": {
             "method": "GET",
-            "url": { "raw": "http://localhost:5000/expenses", "host": ["localhost"], "port": "5000", "path": ["expenses"] }
+            "url": { "raw": "https://split-backend-85gy.onrender.com/expenses", "host": ["split-backend-85gy.onrender.com"], "path": ["expenses"] }
           }
         },
         {
@@ -36,14 +36,14 @@
               "mode": "raw",
               "raw": "{\n    \"amount\": 350,\n    \"description\": \"Petrol\",\n    \"paid_by\": \"Om\",\n    \"participants\": [\"Shantanu\", \"Sanket\", \"Om\"]\n}"
             },
-            "url": { "raw": "http://localhost:5000/expenses/<expense_id_here>", "host": ["localhost"], "port": "5000", "path": ["expenses", "<expense_id_here>"] }
+            "url": { "raw": "https://split-backend-85gy.onrender.com/expenses/<expense_id_here>", "host": ["split-backend-85gy.onrender.com"], "path": ["expenses", "<expense_id_here>"] }
           }
         },
         {
           "name": "Delete Expense - Pizza",
           "request": {
             "method": "DELETE",
-            "url": { "raw": "http://localhost:5000/expenses/<expense_id_here>", "host": ["localhost"], "port": "5000", "path": ["expenses", "<expense_id_here>"] }
+            "url": { "raw": "https://split-backend-85gy.onrender.com/expenses/<expense_id_here>", "host": ["split-backend-85gy.onrender.com"], "path": ["expenses", "<expense_id_here>"] }
           }
         }
       ]
@@ -55,21 +55,21 @@
           "name": "Get All People",
           "request": {
             "method": "GET",
-            "url": { "raw": "http://localhost:5000/people", "host": ["localhost"], "port": "5000", "path": ["people"] }
+            "url": { "raw": "https://split-backend-85gy.onrender.com/people", "host": ["split-backend-85gy.onrender.com"], "path": ["people"] }
           }
         },
         {
           "name": "Get Current Balances",
           "request": {
             "method": "GET",
-            "url": { "raw": "http://localhost:5000/balances", "host": ["localhost"], "port": "5000", "path": ["balances"] }
+            "url": { "raw": "https://split-backend-85gy.onrender.com/balances", "host": ["split-backend-85gy.onrender.com"], "path": ["balances"] }
           }
         },
         {
           "name": "Get Settlement Summary",
           "request": {
             "method": "GET",
-            "url": { "raw": "http://localhost:5000/settlements", "host": ["localhost"], "port": "5000", "path": ["settlements"] }
+            "url": { "raw": "https://split-backend-85gy.onrender.com/settlements", "host": ["split-backend-85gy.onrender.com"], "path": ["settlements"] }
           }
         }
       ]
@@ -86,7 +86,7 @@
               "mode": "raw",
               "raw": "{\n    \"amount\": -100,\n    \"description\": \"Invalid Expense\",\n    \"paid_by\": \"Shantanu\",\n    \"participants\": [\"Shantanu\", \"Sanket\", \"Om\"]\n}"
             },
-            "url": { "raw": "http://localhost:5000/expenses", "host": ["localhost"], "port": "5000", "path": ["expenses"] }
+            "url": { "raw": "https://split-backend-85gy.onrender.com/expenses", "host": ["split-backend-85gy.onrender.com"], "path": ["expenses"] }
           }
         },
         {
@@ -98,7 +98,7 @@
               "mode": "raw",
               "raw": "{\n    \"amount\": 100,\n    \"description\": \"\",\n    \"paid_by\": \"Shantanu\",\n    \"participants\": [\"Shantanu\", \"Sanket\", \"Om\"]\n}"
             },
-            "url": { "raw": "http://localhost:5000/expenses", "host": ["localhost"], "port": "5000", "path": ["expenses"] }
+            "url": { "raw": "https://split-backend-85gy.onrender.com/expenses", "host": ["split-backend-85gy.onrender.com"], "path": ["expenses"] }
           }
         },
         {
@@ -110,7 +110,7 @@
               "mode": "raw",
               "raw": "{\n    \"amount\": 100,\n    \"description\": \"Lunch\",\n    \"participants\": [\"Shantanu\", \"Sanket\", \"Om\"]\n}"
             },
-            "url": { "raw": "http://localhost:5000/expenses", "host": ["localhost"], "port": "5000", "path": ["expenses"] }
+            "url": { "raw": "https://split-backend-85gy.onrender.com/expenses", "host": ["split-backend-85gy.onrender.com"], "path": ["expenses"] }
           }
         },
         {
@@ -122,14 +122,14 @@
               "mode": "raw",
               "raw": "{\n    \"amount\": 100,\n    \"description\": \"Non-existent\",\n    \"paid_by\": \"Shantanu\",\n    \"participants\": [\"Shantanu\", \"Sanket\", \"Om\"]\n}"
             },
-            "url": { "raw": "http://localhost:5000/expenses/64d6e0f7c828d73570f3f999", "host": ["localhost"], "port": "5000", "path": ["expenses", "64d6e0f7c828d73570f3f999"] }
+            "url": { "raw": "https://split-backend-85gy.onrender.com/expenses/64d6e0f7c828d73570f3f999", "host": ["split-backend-85gy.onrender.com"], "path": ["expenses", "64d6e0f7c828d73570f3f999"] }
           }
         },
         {
           "name": "Delete Non-existent Expense",
           "request": {
             "method": "DELETE",
-            "url": { "raw": "http://localhost:5000/expenses/64d6e0f7c828d73570f3f999", "host": ["localhost"], "port": "5000", "path": ["expenses", "64d6e0f7c828d73570f3f999"] }
+            "url": { "raw": "https://split-backend-85gy.onrender.com/expenses/64d6e0f7c828d73570f3f999", "host": ["split-backend-85gy.onrender.com"], "path": ["expenses", "64d6e0f7c828d73570f3f999"] }
           }
         }
       ]
