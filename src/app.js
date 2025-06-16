@@ -21,7 +21,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 .catch(err => console.error('MongoDB Connection Error:', err));
 
 // Routes
-app.use('/expenses', expenseRoutes);
+app.use('/', expenseRoutes);
 app.use('/', settlementRoutes);
 
 // Default route (to check if API is running)
