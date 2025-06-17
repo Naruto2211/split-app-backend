@@ -29,8 +29,7 @@ app.get('/', (req, res) => {
     res.send('Split App Backend is running!');
 });
 
-// Server Port
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
 });
