@@ -1,4 +1,5 @@
 const Expense = require('../models/Expense');
+const Person = require('../models/Person');
 const calculateSettlement = require('../utils/settlementCalculator');
 
 // Add Expense
@@ -6,27 +7,29 @@ exports.addExpense = async (req, res) => {
     try {
         const { amount, description, paid_by, participants } = req.body;
 
-        if (!amount || amount <= 0) {
-            return res.status(400).json({ success: false, message: 'Amount must be positive' });
-        }
-        if (!description || description.trim() === '') {
-            return res.status(400).json({ success: false, message: 'Description is required' });
-        }
-        if (!paid_by || paid_by.trim() === '') {
-            return res.status(400).json({ success: false, message: 'Paid_by is required' });
-        }
-        if (!participants || !Array.isArray(participants) || participants.length === 0) {
-            return res.status(400).json({ success: false, message: 'Participants must be a non-empty array' });
+        if (!amount || amount <= 0 || !description || !paid_by || !participants || participants.length === 0) {
+            return res.status(400).json({ success: false, message: 'Invalid input data' });
         }
 
-        const expense = await Expense.create(req.body);
-        res.status(201).json({ success: true, data: expense, message: 'Expense added successfully' });
+        const newExpense = new Expense({ amount, description, paid_by, participants });
+        await newExpense.save();
+
+        // Auto-add people to Person collection (if not exists)
+        for (const name of participants) {
+            const exists = await Person.findOne({ name });
+            if (!exists) {
+                const newPerson = new Person({ name });
+                await newPerson.save();
+            }
+        }
+
+        res.status(201).json({ success: true, data: newExpense, message: 'Expense added successfully' });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
 };
 
-// Get All Expenses
+// Get all Expenses
 exports.getAllExpenses = async (req, res) => {
     try {
         const expenses = await Expense.find();
@@ -39,12 +42,11 @@ exports.getAllExpenses = async (req, res) => {
 // Update Expense
 exports.updateExpense = async (req, res) => {
     try {
-        const { id } = req.params;
-        const expense = await Expense.findByIdAndUpdate(id, req.body, { new: true });
-
-        if (!expense) return res.status(404).json({ success: false, message: 'Expense not found' });
-
-        res.status(200).json({ success: true, data: expense, message: 'Expense updated successfully' });
+        const updatedExpense = await Expense.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!updatedExpense) {
+            return res.status(404).json({ success: false, message: 'Expense not found' });
+        }
+        res.json({ success: true, data: updatedExpense, message: 'Expense updated successfully' });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
@@ -53,63 +55,55 @@ exports.updateExpense = async (req, res) => {
 // Delete Expense
 exports.deleteExpense = async (req, res) => {
     try {
-        const { id } = req.params;
-        const expense = await Expense.findByIdAndDelete(id);
-
-        if (!expense) return res.status(404).json({ success: false, message: 'Expense not found' });
-
-        res.status(200).json({ success: true, message: 'Expense deleted successfully' });
+        const deletedExpense = await Expense.findByIdAndDelete(req.params.id);
+        if (!deletedExpense) {
+            return res.status(404).json({ success: false, message: 'Expense not found' });
+        }
+        res.json({ success: true, message: 'Expense deleted successfully' });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
 };
 
-// Get Settlements
-exports.getSettlements = async (req, res) => {
-    try {
-        const expenses = await Expense.find();
-        const settlements = calculateSettlement(expenses);
-        res.status(200).json({ success: true, data: settlements, message: 'Settlements calculated successfully' });
-    } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
-    }
-};
-
-// Get All People
+// Get all People
 exports.getPeople = async (req, res) => {
-    try {
-        const expenses = await Expense.find();
-        const peopleSet = new Set();
-
-        expenses.forEach(exp => {
-            peopleSet.add(exp.paid_by);
-            exp.participants.forEach(p => peopleSet.add(p));
-        });
-
-        res.status(200).json({ success: true, data: Array.from(peopleSet), message: 'People fetched successfully' });
-    } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
-    }
+    const people = await Person.find().select('name -_id');
+    res.json({ success: true, data: people.map(p => p.name) });
 };
 
-// Get Balances
+// Get balances
 exports.getBalances = async (req, res) => {
-    try {
-        const expenses = await Expense.find();
-        const balances = {};
+    const expenses = await Expense.find();
+    const balances = calculateSettlement(expenses);
+    res.json({ success: true, data: balances });
+};
 
-        expenses.forEach(exp => {
-            const splitAmount = exp.amount / exp.participants.length;
+// Get settlements summary
+exports.getSettlements = async (req, res) => {
+    const expenses = await Expense.find();
+    const balances = calculateSettlement(expenses);
+    let debtors = [], creditors = [];
+    Object.keys(balances).forEach(person => {
+        if (balances[person] < 0) debtors.push({ person, amount: -balances[person] });
+        else if (balances[person] > 0) creditors.push({ person, amount: balances[person] });
+    });
 
-            exp.participants.forEach(person => {
-                balances[person] = (balances[person] || 0) - splitAmount;
-            });
-
-            balances[exp.paid_by] = (balances[exp.paid_by] || 0) + exp.amount;
+    const settlements = [];
+    debtors.forEach(debtor => {
+        creditors.forEach(creditor => {
+            if (debtor.amount === 0) return;
+            let minAmount = Math.min(debtor.amount, creditor.amount);
+            if (minAmount > 0) {
+                settlements.push({
+                    from: debtor.person,
+                    to: creditor.person,
+                    amount: minAmount.toFixed(2)
+                });
+                debtor.amount -= minAmount;
+                creditor.amount -= minAmount;
+            }
         });
+    });
 
-        res.status(200).json({ success: true, data: balances, message: 'Balances calculated successfully' });
-    } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
-    }
+    res.json({ success: true, data: settlements });
 };
